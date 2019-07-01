@@ -1,0 +1,181 @@
+/* You can add global styles to this file, and also import other style files */
+input.ng-touched.ng-invalid {
+  border-color: red;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0px;
+}
+
+html {
+  font-size:16px;
+}
+
+h1.display-4 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+    text-align: center;
+    font-weight: 600;
+    color: #272626;
+}
+
+
+.subTasks {
+  font-size: .8rem;
+}
+
+
+.done {
+  text-decoration: line-through;
+}
+.task-wrapper{
+  padding: 7%;
+}
+
+.listsWrapper {
+  display: flex;
+  justify-content: space-around;
+}
+.masterList .task-wrapper,
+.user1List .task-wrapper,
+.user2List .task-wrapper{
+  border: solid 2px #dedede;
+}
+/*-------start all form-------*/
+input, textarea {
+  background: none;
+  border: none;
+}
+ul {
+  margin-bottom: 0;
+}
+.task-wrapper {
+  padding: 17px 37px;
+
+}
+.masterList .task-wrapper {
+  border-left: solid 2px #dedede;
+  border-right: solid 2px #dedede;
+}
+
+
+/*-------end all forms-------*/
+
+
+
+/*-------start labels-------*/
+.label textarea,
+.label li {
+  text-align: center;
+  width: 90%;
+}
+.label .task textarea {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.6rem;
+}
+.label input{
+  display: none;
+}
+.label .subTasks div{
+      margin-bottom: -1rem;
+}
+.label .subTasks textarea {
+  font-size: .75rem;
+  color: #a5a5a5;
+  line-height: 1rem;
+  margin-bottom: -1.8rem;
+}
+
+.label.task-wrapper {
+  background-color: #000;
+  border: none;
+}
+.label .task, .label .subTasks{
+    width: 100%;
+}
+
+.label .task input[type="checkbox"],
+.label .subTasks input[type="checkbox"]{
+  display: none;
+}
+.label textarea{
+  border-bottom: solid 1px #5d5d5d;
+}
+
+textarea {
+   resize: none;
+}
+/*textarea {
+  display: block;
+  box-sizing: padding-box;
+  overflow: hidden;
+  padding: 10px;
+  width: 250px;
+  font-size: 14px;
+  margin: 50px auto;
+  border: 0;
+}*/
+/*-------end labels-------*/
+
+/*-------start task-------*/
+
+.task{
+  display: flex;
+  align-items: center;
+}
+.task textarea{
+  font-size: 1.5rem;
+}
+.subtasks li {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+  font-size: .8rem;
+}
+.subtasks li textarea{
+  color: #a5a5a5;
+}
+.trash {
+  padding: 0px 10px;
+  color: #aaa5a5 !important;
+}
+.add {
+  color: #aaa5a5 !important;
+}
+.autosize {
+  resize: none;
+  overflow: hidden;
+  border-bottom: solid 1px #c7c7c7;
+  height: 26px;
+}
+.task .autosize {
+  height: 38px;
+}
+/*-------end task-------*/
+
+/*-------NEW TASK BUTTON-------*/
+.newTask{
+    border-bottom: solid 2px #000000;
+  }
+/*------end task button--------*/
+
+.user .task {
+  align-items: flex-start;
+}
+.user .task input {
+  margin-top: 6px;
+}
+.user .task p {
+  margin-bottom: 0px;
+}
+
+.user .from{
+  font-size: .8rem;
+  font-style: italic;
+  margin-left: 0px;
+  color: #a5a5a5;
+}
