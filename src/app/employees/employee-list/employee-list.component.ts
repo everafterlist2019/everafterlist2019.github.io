@@ -62,9 +62,22 @@ export class EmployeeListComponent implements OnInit {
     this.docRef = this.afs.doc(`tasks/master`);
     this.doc$ = this.docRef.valueChanges();
 
-    this.myControl.setValue(`This is contenteditable text for reactive form`);
 
 
+
+
+
+
+    /*this.doc$.subscribe(value => {
+  const value1 = value.value1
+  const value2 = value.value2;
+  ...
+  const valueN = value.valueN;
+});*/
+
+    //console.log("ngOnInit :" + this.docRef);
+    //console.log("ngOnInit :" + this.doc$.tasks);
+    //console.log("ngOnInit :" + this.docRef/tasks);
   }
 
 
@@ -189,7 +202,6 @@ export class EmployeeListComponent implements OnInit {
       subtask: masterArr[taskIndex].subtasks[subtaskIndex].name,
       subtaskDone: masterArr[taskIndex].subtasks[subtaskIndex].done
     };
-
     if(user == "user1"){
       //if adding to user list
       var user1checkbox = masterArr[taskIndex].subtasks[subtaskIndex].inUser1List;

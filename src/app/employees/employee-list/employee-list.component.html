@@ -1,7 +1,7 @@
 <div class="listsWrapper">
   <!--START USER 1 LIST-->
   <div class="user1List user">
-      <h1 class="display-4">Shari Task develop...</h1>
+      <h1 class="display-4">Priority 1.</h1>
       <ul *ngIf="doc$ | async as doc" cdkDropList [cdkDropListData]="doc.user1" #mainList="cdkDropList" (cdkDropListDropped)="reorderList($event, doc.user1, null, 'user1')">
           <li class="task-wrapper" *ngFor="let currTask of doc.user1; let i = index" cdkDrag>
             <div class="task" >
@@ -63,9 +63,9 @@
   <!--START USER 2 LIST-->
   <!--START USER 1 LIST-->
   <div class="user2List user">
-      <h1 class="display-4">Kevin</h1>
+      <h1 class="display-4">Priority 2.</h1>
       <ul *ngIf="doc$ | async as doc" cdkDropList [cdkDropListData]="doc.user2" #mainList="cdkDropList" (cdkDropListDropped)="reorderList($event, doc.user2, null, 'user2')">
-          <li class="task-wrapper" *ngFor="let currTask of doc.user2; let i = index" cdkDrag>
+          <li class="task-wrapper" *ngFor="let currTask of doc.user2; let i = index" cdkDrag >
             <div class="task" >
               <input (change)="fromUserEditMaster(doc.tasks, doc.user2, currTask, 'user2')" type="checkbox" [(ngModel)]="currTask.subtaskDone" />
               <!--<textarea [(ngModel)]="currTask.name" class="autosize" [ngClass]="{'done': currTask.done==true}" (blur)="editTask(doc.tasks)"></textarea>-->

@@ -14,9 +14,6 @@ import { EmployeeComponent } from './employees/employee/employee.component';
 import { EmployeeListComponent } from './employees/employee-list/employee-list.component';
 import { EmployeeService } from './shared/employee.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { SortByPipe } from './sort-by.pipe';
-import { SortableDirective } from './sortable.directive';
-import { ContenteditableModelDirective } from './contenteditable-model.directive';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { ContenteditableModule } from '@ng-stack/contenteditable';
@@ -26,10 +23,8 @@ import { ContenteditableModule } from '@ng-stack/contenteditable';
     AppComponent,
     EmployeesComponent,
     EmployeeComponent,
-    EmployeeListComponent,
-    SortByPipe,
-    SortableDirective,
-    ContenteditableModelDirective
+    EmployeeListComponent
+
   ],
   imports: [
     BrowserModule,
@@ -39,7 +34,6 @@ import { ContenteditableModule } from '@ng-stack/contenteditable';
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     DragDropModule,
-    ContenteditableModule,
     FormsModule,
     ReactiveFormsModule
   ],
