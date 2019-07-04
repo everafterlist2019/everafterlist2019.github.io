@@ -202,3 +202,10 @@ textarea {
   margin-right: 2px;
   margin-bottom: 2px;
 }
+
+@media only screen and (max-width: 480px) {
+
+  .listsWrapper {
+      justify-content: initial;
+    }
+}
