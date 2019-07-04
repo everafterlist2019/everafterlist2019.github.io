@@ -1,7 +1,7 @@
 <div class="listsWrapper">
   <!--START USER 1 LIST-->
   <div class="user1List user">
-      <h1 class="display-4">Shari</h1>
+      <h1 class="display-4">Shari Task develop...</h1>
       <ul *ngIf="doc$ | async as doc" cdkDropList [cdkDropListData]="doc.user1" #mainList="cdkDropList" (cdkDropListDropped)="reorderList($event, doc.user1, null, 'user1')">
           <li class="task-wrapper" *ngFor="let currTask of doc.user1; let i = index" cdkDrag>
             <div class="task" >
