@@ -179,3 +179,19 @@ textarea {
   margin-left: 0px;
   color: #a5a5a5;
 }
+
+.drag-handle {
+  display: flex;
+  flex-direction: column;
+  width: 26px;
+  margin-left: 0;
+}
+
+.drag-handle .dot {
+  height: 4px;
+  width: 3px;
+  background-color: #bbb;
+  border-radius: 1px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}

@@ -33,15 +33,38 @@
             <!--<input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser1List" />
             <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser2List" />-->
             <span class="trash" (click)="deleteTask(currTask)">X</span>
+            <div class="drag-handle container" cdkDragHandle>
+              <div class="row">
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="row">
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
           </div>
           <div class="subtasks">
             <ul cdkDropList [cdkDropListData]="currTask.subtasks" #secondList="cdkDropList" (cdkDropListDropped)="reorderList($event, doc.tasks, currTask.subtasks, 'master')">
-              <li *ngFor="let currSubtask of currTask.subtasks; let x = index" cdkDrag>
+              <li *ngFor="let currSubtask of currTask.subtasks; let x = index" cdkDrag cdkDragLockAxis="y">
+
                 <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currSubtask.done" />
-                <textarea class="autosize" [ngClass]="{'done': currSubtask.done==true}" (blur)="editTask(doc.tasks)" [(ngModel)]="currSubtask.name"></textarea>
+                <textarea class="autosize" [ngClass]="{'done': currSubtask.done==true}" (blur)="editTask(doc.tasks)" [(ngModel)]="currSubtask.name" ></textarea>
                 <input (change)="fromMasterEditUser(doc.tasks, i, x, 'user1')" type="checkbox" [(ngModel)]="currSubtask.inUser1List" />
                 <input (change)="fromMasterEditUser(doc.tasks, i, x, 'user2')" type="checkbox" [(ngModel)]="currSubtask.inUser2List" />
                 <a class="trash" (click)="deleteTask(null, doc.tasks, i, x)">-</a>
+
+                <div class="drag-handle" cdkDragHandle>
+                  <div class="row">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                  <div class="row">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                </div>
+
               </li>
               <li>
                 <!--<input type="text" [(ngModel)]="newTaskName"/>-->
