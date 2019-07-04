@@ -186,6 +186,13 @@ textarea {
   width: 26px;
   margin-left: 0;
 }
+.user .task-wrapper {
+  position: relative;
+}
+.user .drag-handle {
+  position: absolute;
+  right: 0;
+}
 
 .drag-handle .dot {
   height: 4px;

@@ -6,7 +6,6 @@
           <li class="task-wrapper" *ngFor="let currTask of doc.user1; let i = index" cdkDrag>
             <div class="task" >
               <input (change)="fromUserEditMaster(doc.tasks, doc.user1, currTask, 'user1')" type="checkbox" [(ngModel)]="currTask.subtaskDone" />
-              <!--<textarea [(ngModel)]="currTask.name" class="autosize" [ngClass]="{'done': currTask.done==true}" (blur)="editTask(doc.tasks)"></textarea>-->
               <div>
                 <p [ngClass]="{'done': currTask.subtaskDone==true}" >{{currTask.subtask}}</p>
                 <p class="from">
@@ -14,9 +13,17 @@
                   <span [ngClass]="{'done': currTask.subtaskDone==true}">{{currTask.name}}</span>
                 </p>
               </div>
-              <!--<input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser1List" />
-              <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser2List" />-->
               <span class="trash" (click)="deleteFromUserList(doc.tasks, doc.user1, currTask, 'user1')">X</span>
+              <div class="drag-handle container" cdkDragHandle>
+                <div class="row">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+                <div class="row">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+              </div><!--end drag handle-->
             </div>
           </li>
       </ul>
@@ -30,8 +37,6 @@
           <div class="task" >
             <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.done" />
             <textarea [(ngModel)]="currTask.name" class="autosize" [ngClass]="{'done': currTask.done==true}" (blur)="editTask(doc.tasks)"></textarea>
-            <!--<input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser1List" />
-            <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser2List" />-->
             <span class="trash" (click)="deleteTask(currTask)">X</span>
             <div class="drag-handle container" cdkDragHandle>
               <div class="row">
@@ -42,11 +47,12 @@
                 <span class="dot"></span>
                 <span class="dot"></span>
               </div>
-            </div>
-          </div>
-          <div class="subtasks">
-            <ul cdkDropList [cdkDropListData]="currTask.subtasks" #secondList="cdkDropList" (cdkDropListDropped)="reorderList($event, doc.tasks, currTask.subtasks, 'master')">
-              <li *ngFor="let currSubtask of currTask.subtasks; let x = index" cdkDrag cdkDragLockAxis="y">
+            </div><!--end drag handle-->
+
+          </div><!--END TASK-->
+         <div class="subtasks">
+         <ul cdkDropList [cdkDropListData]="currTask.subtasks" #secondList="cdkDropList" (cdkDropListDropped)="reorderList($event, doc.tasks, currTask.subtasks, 'master')">
+                <li *ngFor="let currSubtask of currTask.subtasks; let x = index" cdkDrag cdkDragLockAxis="y">
 
                 <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currSubtask.done" />
                 <textarea class="autosize" [ngClass]="{'done': currSubtask.done==true}" (blur)="editTask(doc.tasks)" [(ngModel)]="currSubtask.name" ></textarea>
@@ -54,7 +60,7 @@
                 <input (change)="fromMasterEditUser(doc.tasks, i, x, 'user2')" type="checkbox" [(ngModel)]="currSubtask.inUser2List" />
                 <a class="trash" (click)="deleteTask(null, doc.tasks, i, x)">-</a>
 
-                <div class="drag-handle" cdkDragHandle>
+                <div class="drag-handle container" cdkDragHandle>
                   <div class="row">
                     <span class="dot"></span>
                     <span class="dot"></span>
@@ -63,16 +69,14 @@
                     <span class="dot"></span>
                     <span class="dot"></span>
                   </div>
-                </div>
+                </div><!--end drag handle-->
 
               </li>
               <li>
-                <!--<input type="text" [(ngModel)]="newTaskName"/>-->
                 <a class="add" (click)="addTask(null, doc.tasks, i)">+</a>
               </li>
             </ul>
-          </div>
-
+          </div><!--END SUBTASK-->
         </li>
     </ul>
 
@@ -91,7 +95,6 @@
           <li class="task-wrapper" *ngFor="let currTask of doc.user2; let i = index" cdkDrag>
             <div class="task" >
               <input (change)="fromUserEditMaster(doc.tasks, doc.user2, currTask, 'user2')" type="checkbox" [(ngModel)]="currTask.subtaskDone" />
-              <!--<textarea [(ngModel)]="currTask.name" class="autosize" [ngClass]="{'done': currTask.done==true}" (blur)="editTask(doc.tasks)"></textarea>-->
               <div>
                 <p [ngClass]="{'done': currTask.subtaskDone==true}" >{{currTask.subtask}}</p>
                 <p class="from">
@@ -99,9 +102,17 @@
                   <span [ngClass]="{'done': currTask.subtaskDone==true}">{{currTask.name}}</span>
                 </p>
               </div>
-              <!--<input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser1List" />
-              <input (change)="editTask(doc.tasks)" type="checkbox" [(ngModel)]="currTask.inUser2List" />-->
-              <span class="trash" (click)="deleteFromUserList(doc.tasks, doc.user2, currTask, 'user2')">X</span>
+                  <span class="trash" (click)="deleteFromUserList(doc.tasks, doc.user2, currTask, 'user2')">X</span>
+                  <div class="drag-handle container" cdkDragHandle>
+                    <div class="row">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </div>
+                    <div class="row">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </div>
+                  </div><!--end drag handle-->
             </div>
           </li>
       </ul>
