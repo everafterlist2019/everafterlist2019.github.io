@@ -208,4 +208,7 @@ textarea {
   .listsWrapper {
       justify-content: initial;
     }
+  .user h1 {
+    width: 83vw;
+  }
 }
