@@ -12,6 +12,9 @@ import { firestore } from 'firebase/app';
 
 import { FormControl } from '@angular/forms';
 
+import { TasklistService } from 'src/app/shared/tasklist.service';
+import { Task } from 'src/app/shared/task.model';
+import { TaskList } from 'src/app/shared/tasklist.model';
 
 
 @Component({
@@ -30,15 +33,19 @@ export class EmployeeListComponent implements OnInit {
   doc$: Observable<any>;
 
 
+
+
   templateDrivenForm = 'This is contenteditable text for template-driven form';
   myControl = new FormControl;
 
+  allTaskLists: TaskList[];
+  masterTaskList: Task[];
 
   constructor(private service: EmployeeService,
     private firestore: AngularFirestore,
     private toastr:ToastrService,
-    private afs: AngularFirestore) {
-
+    private afs: AngularFirestore,
+    private service2: TasklistService) {
 
      }
 
@@ -55,9 +62,28 @@ export class EmployeeListComponent implements OnInit {
       })
     });
 
+    this.service2.getTasks().subscribe(actionArray =>{
+      this.allTaskLists = actionArray.map(item => {
+        return {
+          id: item.payload.doc.id,
+          ...item.payload.doc.data()
+        } as TaskList;
+      })
+      console.log("NGONINIT FUNCTION :");
+      this.masterTaskList = this.allTaskLists[0].tasks;
+      //console.log("NGONINIT FUNCTION :" + this.allTaskLists[0].tasks[0].name);
+      console.log("NGONINIT FUNCTION :" + this.masterTaskList[0].name);
+      this.masterTaskList[0].name = "initTask";
+      this.firestore.doc('tasks2/master').update({tasks: this.masterTaskList});
 
-    /*this.list = _.orderBy(this.list, ['orderBy'],['asc']);
-    this.updateOrder();*/
+    });
+
+    //this.masterTaskList = this.allTaskLists.valueChanges();
+    //console.log("made it into function preloader: " + this.masterTaskList);
+
+
+
+
 
     this.docRef = this.afs.doc(`tasks/master`);
     this.doc$ = this.docRef.valueChanges();
