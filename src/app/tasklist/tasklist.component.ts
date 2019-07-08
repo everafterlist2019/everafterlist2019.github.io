@@ -6,9 +6,9 @@ import { firestore } from 'firebase/app';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { FormControl } from '@angular/forms';
 
-import { TasklistService } from 'src/app/shared/tasklist.service';
-import { TaskList } from 'src/app/shared/tasklist.model';
-import { Task } from 'src/app/shared/task.model';
+import { TasklistService } from 'src/app/tasklist.service';
+import { TaskList } from 'src/app/tasklist.model';
+import { Task } from 'src/app/task.model';
 
 
 @Component({
@@ -17,15 +17,15 @@ import { Task } from 'src/app/shared/task.model';
   styleUrls: ['./tasklist.component.css']
 })
 export class TasklistComponent implements OnInit {
+
   allLists: TaskList[];
-  //masterList: Task[];
-  //user1List: Task[];
-  //user2List: Task[];
+  masterList: Task[];
+  user1List: Task[];
+  user2List: Task[];
   newTaskName: string;
 
   constructor(
     private firestore: AngularFirestore,
-    private toastr:ToastrService,
     private service2: TasklistService) {
 
      }
@@ -40,17 +40,13 @@ export class TasklistComponent implements OnInit {
           ...item.payload.doc.data()
         } as TaskList;
       })
-      //this.masterTaskList = this.allTaskLists[0].tasks;
-      //this.user1List = this.allTaskLists[1].tasks;
-      //this.user2List = this.allTaskLists[2].tasks;
-
+      this.masterList = this.allLists[0].tasks;
+      this.user1List = this.allLists[1].tasks;
+      this.user2List = this.allLists[2].tasks;
       //console.log("NGONINIT FUNCTION :" + this.masterTaskList[0].name);
       //this.masterTaskList[0].name = "initTask";
       //this.firestore.doc('tasks2/master').update({tasks: this.masterTaskList});
 
-    });
+      });
+    }
   }
-
-
-
-}
