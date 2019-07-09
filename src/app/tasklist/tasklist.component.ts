@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { TasklistService } from 'src/app/tasklist.service';
 import { TaskList } from 'src/app/tasklist.model';
 import { Task } from 'src/app/task.model';
+import { subTask } from 'src/app/subtask2.model';
 
 import { v4 as uuid } from 'uuid';
 
@@ -42,34 +43,23 @@ export class TasklistComponent implements OnInit {
         } as TaskList;
       })
 
-    this.masterList = {
-      id: this.allLists[0].id,
-      tasks : this.allLists[0].tasks
-    };
-    this.user1List = {
-      id: this.allLists[1].id,
-      tasks : this.allLists[1].tasks
-    };
-    this.user2List = {
-      id: this.allLists[2].id,
-      tasks : this.allLists[2].tasks
-    };
-    console.log("NG ON INIT: " + this.masterList.id);
-
-
-      //this.user1List = this.allLists[1].tasks;
-      //this.user2List = this.allLists[2].tasks;
-
-      //console.log('new uid: ', uuid());
-      //console.log("NGONINIT FUNCTION :" + this.masterTaskList[0].name);
-      //this.masterTaskList[0].name = "initTask";
-      //this.firestore.doc('tasks2/master').update({tasks: this.masterTaskList});
-
+      this.masterList = {
+        id: this.allLists[0].id,
+        tasks : this.allLists[0].tasks
+      };
+      this.user1List = {
+        id: this.allLists[1].id,
+        tasks : this.allLists[1].tasks
+      };
+      this.user2List = {
+        id: this.allLists[2].id,
+        tasks : this.allLists[2].tasks
+      };
       });
     }
 
 
-  //Add New Task to List
+
   addTask(arr: TaskList, newTaskName: string, isLabel?: boolean) {
     var newTask = {
       name: newTaskName,
@@ -91,146 +81,71 @@ export class TasklistComponent implements OnInit {
     });
 
     this.newTaskName = '';
-  } //end addTask
+  }
+
+  addSubtask(arr: TaskList, currTask: Task, newTaskName: string){
+    var newSubtask = {
+      name:newTaskName,
+      id: uuid(),
+      inUser1List:false,
+      inUser2List: false,
+      done:false
+    };
+    currTask.subtasks.push(newSubtask);
+    this.updateFirestore(arr);
+    this.newTaskName = '';
+  }
+
+  deleteTask(arr: TaskList, task: Task) {
+    if(task !==null){
+      this.firestore.doc('tasks2/' + arr.id).update({
+        tasks: firestore.FieldValue.arrayRemove(task)
+      });
+    }
+  }
+
+  deleteSubtask(arr: TaskList, task: Task, subtaskIndex: number) {
+    task.subtasks.splice(subtaskIndex,1);
+    this.updateFirestore(arr);
+  }
+
+
+  updateFirestore(arr: TaskList){
+    this.firestore.doc('tasks2/' + arr.id).update({tasks: arr.tasks});
+  }
+
+  reorderList(event: CdkDragDrop<string[]>, arr: TaskList, subArr?: subTask[]) {
+    if (event.previousContainer !== event.container) {
+      transferArrayItem(event.previousContainer.data,event.container.data,
+        event.previousIndex, event.currentIndex)
+    }
+    else {
+      //IF MOVING SUBTASKS,
+      if (subArr != null){
+        moveItemInArray(subArr, event.previousIndex, event.currentIndex);
+      }
+      //ELSE, MOVING MAIN TASKS
+      else{
+        moveItemInArray(arr.tasks, event.previousIndex, event.currentIndex);
+      }
+
+      //UPDATE BACK TO firestore
+      this.updateFirestore(arr);
+    }
+  }
+
+
+
 
 } //end class
 
 /*
 
 
-  addSubTask(emp: Employee) {
-    var subTaskObj = {name:emp.newSubTask,done:false};
-    emp.subTasks.push(subTaskObj);
-    emp.newSubTask = '';
-    this.firestore.doc('employees/' + emp.id).update(emp);
-
-  }
-  appendItem() {
-    const emoji = '🍺 Beer Me'
-    this.docRef.update({
-      favs: firestore.FieldValue.arrayUnion(emoji)
-    })
-  }
-
-  removeItem(emoji) {
-    this.docRef.update({
-      favs:  firestore.FieldValue.arrayRemove(emoji)
-    })
 
 
 
-    onDelete(id: string) {
-      this.firestore.doc('employees/' + id).delete();
-      //this.updateOrder();
-      //this.toastr.warning('Deleted successfully','EMP. Register');
-    }
 
-
-    onDelete(id: string) {
-      this.firestore.doc('employees/' + id).delete();
-      //this.updateOrder();
-      //this.toastr.warning('Deleted successfully','EMP. Register');
-    }
-
-    updateOrder(){
-      for(var i=0;i<this.list.length;i++) {
-        this.list[i].displayOrder = i;
-        console.log("move item" + i);
-        console.log("move item" + this.list[i].fullName);
-        console.log("move item" + this.list[i].displayOrder);
-        //this.firestore.doc('employees/' + this.list[i].id).update(this.list[i]);
-      }
-      for(var i=0;i<this.list.length;i++) {
-        //this.list[i].displayOrder = i;
-        console.log("move item" + i);
-        console.log("move item" + this.list[i].fullName);
-        console.log("move item" + this.list[i].displayOrder);
-        this.firestore.doc('employees/' + this.list[i].id).update(this.list[i]);
-
-      }
-    }
-
-    reorderList(event: CdkDragDrop<string[]>, arr: any, subArr: any, list: string) {
-      console.log("drop function: " + arr);
-      if (event.previousContainer !== event.container) {
-        transferArrayItem(event.previousContainer.data,event.container.data,
-          event.previousIndex, event.currentIndex)
-      }
-      else {
-        //IF MOVING SUBTASKS,
-        if (subArr != null){
-          moveItemInArray(subArr, event.previousIndex, event.currentIndex);
-        }
-        //ELSE, MOVING MAIN TASKS
-        else{
-          moveItemInArray(arr, event.previousIndex, event.currentIndex);
-        }
-
-        //UPDATE BACK TO firestore
-        if (list=="master"){
-          this.firestore.doc('tasks/master').update({tasks: arr});
-        }
-        else if (list=="user1"){
-          this.firestore.doc('tasks/master').update({user1: arr});
-        }
-        else{
-          this.firestore.doc('tasks/master').update({user2: arr});
-        }
-      }
-    }
-
-    //ADD NEW Task to masterList
-    //Given string, create new task and push to firestore
-    addTask(isLabel?: string, arr?: any, i?: number) {
-      console.log("add task: " + this.newTaskName);
-      //IF SUBTASK
-      if (i !== null){
-        var newIndex = arr[i].subtasks.length+1;
-        var newSub = {name:"", inUser1List:false, inUser2List: false, done:false};
-        arr[i].subtasks.push(newSub);
-        this.firestore.doc('tasks/master').update({tasks: arr});
-      }
-      //ELSE IT'S A NEW TASK OR LABEL
-      else {
-        var newTask = {
-          name: this.newTaskName,
-          done: false,
-          inUser1List: false,
-          inUser2List: false,
-          subtasks: [{name:'sub1', inUser1List:false, inUser2List: false, done:false},{name:'sub2', inUser1List:false, inUser2List: false, done:false}]
-        };
-
-        if (isLabel != null) {
-          newTask.done = null;
-          newTask.subtasks = [{name:'Lead.', inUser1List:false, inUser2List: false, done:false},{name:'Lag.', inUser1List:false, inUser2List: false, done:false}]
-
-        }
-
-        this.docRef.update({
-          tasks: firestore.FieldValue.arrayUnion(newTask)
-        })
-      }
-
-      this.newTaskName = '';
-
-    }
-
-
-
-    //DELETE NEW Task to masterList
-    deleteTask (task?: any, arr?: any, i?: number, x?: number){
-      //IF DELETING TASK
-      if(task !==null){
-        this.docRef.update({
-          tasks: firestore.FieldValue.arrayRemove(task)
-        })
-      }
-      //IF DELETING SUBTASK
-      else {
-        arr[i].subtasks.splice(x,1);
-        this.firestore.doc('tasks/master').update({tasks: arr});
-      }
-    }
 
     editTask (arr: any) {
       this.firestore.doc('tasks/master').update({tasks: arr});
