@@ -1,5 +1,5 @@
 export class subTask {
-  id: number;
+  id: string;
   name: string;
   done: boolean;
   inUser1List: boolean;

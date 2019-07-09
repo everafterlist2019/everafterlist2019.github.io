@@ -1,7 +1,7 @@
 import {subTask} from './subtask2.model';
 
 export class Task {
-  id: number;
+  id: string;
   label: boolean;
   name: string;
   done : boolean;

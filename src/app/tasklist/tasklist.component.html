@@ -1,10 +1,10 @@
 <div class="listsWrapper">
   <div class="masterList">
     <h1 class="display-4">TEST</h1>
-    <ul>
-      <li *ngFor="let currTask of masterList; let i = index">
+    <ul *ngIf="masterList">
+      <li *ngFor="let currTask of masterList.tasks; let i = index" class="task-wrapper" [ngClass]="{'label': currTask.label==true}">
         <div class="task">
-            <input [(ngModel)]="currTask.done" (change)="editTask(doc.tasks)" type="checkbox"  />
+            <input [(ngModel)]="currTask.done" (change)="editTask()" type="checkbox"  />
             <textarea [(ngModel)]="currTask.name" class="autosize" [ngClass]="{'done': currTask.done==true}" (blur)="editTask(doc.tasks)"></textarea>
             <span class="trash" (click)="deleteTask(currTask)">X</span>
             <div class="drag-handle container" cdkDragHandle>
@@ -49,8 +49,8 @@
     </ul>
     <div>
       <input class="newTask" type="text" [(ngModel)]="newTaskName"/>
-      <a (click)="addTask('label', null, null)" class="btn ">ADD NEW LABEL</a>
-      <a (click)="addTask(null, null, null)" class="btn ">ADD NEW TASK</a>
+      <a (click)="addTask(masterList, newTaskName, true)" class="btn ">ADD NEW LABEL</a>
+      <a (click)="addTask(masterList, newTaskName, false)" class="btn ">ADD NEW TASK</a>
     </div>
   </div><!--END masterList-->
 </div><!--END listsWrapper-->
