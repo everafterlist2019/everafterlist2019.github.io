@@ -155,6 +155,16 @@ body {
     margin-bottom: -5px;
     line-height: 20px;
   }
+  .trash{
+    position: absolute;
+    right: 0px;
+    top: 0;
+  }
+  .drag-handle {
+    position: absolute;
+    right: 22px;
+    top: 7px;
+  }
   .from {
     margin-top: 5px;
     font-size: 0.6rem;
@@ -171,12 +181,12 @@ body {
   .label .from {
     display: none;
   }
-  .trash{
+  .label .trash{
     position: absolute;
     right: 39px;
     top: 0;
   }
-  .drag-handle {
+  .label .drag-handle {
     position: absolute;
     right: 62px;
     top: 7px;
