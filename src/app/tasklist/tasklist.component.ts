@@ -13,6 +13,8 @@ import { subTask } from 'src/app/subtask2.model';
 
 import { v4 as uuid } from 'uuid';
 
+declare var $: any; //importing jquery
+
 @Component({
   selector: 'app-tasklist',
   templateUrl: './tasklist.component.html',
@@ -28,9 +30,7 @@ export class TasklistComponent implements OnInit {
 
   constructor(
     private firestore: AngularFirestore,
-    private service2: TasklistService) {
-
-     }
+    private service2: TasklistService) {}
 
   ngOnInit() {
     this.newTaskName = '';
@@ -56,10 +56,22 @@ export class TasklistComponent implements OnInit {
         tasks : this.allLists[2].tasks
       };
       });
+
+
     }
 
 
 
+
+
+  //IS THIS FUNCTION NECESSARY?
+  getTaskBySubtask(arr: TaskList,currSubtask: subTask){
+    return arr.tasks.find(task => task.subtasks.some(item => item.id === currSubtask.id));
+  }
+
+  //---------USER FUNCTIONALITY---------
+
+  //Master List --> <Add New Task/Label>
   addTask(arr: TaskList, newTaskName: string, isLabel?: boolean) {
     var newTask = {
       name: newTaskName,
@@ -76,13 +88,12 @@ export class TasklistComponent implements OnInit {
         done:false}]
     };
 
-    this.firestore.doc('tasks2/' + arr.id).update({
-      tasks: firestore.FieldValue.arrayUnion(newTask)
-    });
+    this.arrayUnionFirestore(arr, newTask);
 
     this.newTaskName = '';
   }
 
+  //Master List --> subtask --> <Add New Task>
   addSubtask(arr: TaskList, currTask: Task, newTaskName: string){
     var newSubtask = {
       name:newTaskName,
@@ -96,6 +107,196 @@ export class TasklistComponent implements OnInit {
     this.newTaskName = '';
   }
 
+  //Master List --> X
+  masterButtonX(task: Task){
+    //remove any subtasks from user lists
+    for(var i=0;i<this.user1List.tasks.length;i++) {
+      if(this.user1List.tasks[i].id == task.id){
+        this.deleteTask(this.user1List, this.user1List.tasks[i]);
+      }
+    }
+    for(var i=0;i<this.user2List.tasks.length;i++) {
+      if(this.user2List.tasks[i].id == task.id){
+        this.deleteTask(this.user2List, this.user2List.tasks[i]);
+      }
+    }
+    //delete task from master
+    this.deleteTask(this.masterList, task);
+  }
+
+  //Master List --> subtask --> -
+  deleteSubtaskAllLists(arr: TaskList, task: Task, subTaskToDelete: subTask, subTaskIndex: number) {
+    //if in user 1, delete task containing subtask from user1
+    if (subTaskToDelete.inUser1List == true){
+      this.deleteUserTask(this.user1List, task, subTaskToDelete);
+    }
+    //if in user 2, delete task containing subtask from user1
+    if (subTaskToDelete.inUser2List == true){
+      this.deleteUserTask(this.user1List, task, subTaskToDelete);
+    }
+    //delete subtask from master
+    this.deleteSubtask(this.masterList, task, subTaskIndex);
+
+  }
+
+  //Master List --> subtask --> ☐☐
+  userCheckbox(arr: TaskList, currTask: Task, currSubtask: subTask, inUserList: boolean){
+    //update master list in firestore
+    this.updateFirestore(this.masterList);
+
+    //get subtask in each user, and update inuser1list and inuser2list
+    if (currSubtask.inUser1List == true){
+      for(var i=0;i<this.user1List.tasks.length;i++) {
+          if(this.user1List.tasks[i].subtasks[0].id == currSubtask.id) {
+            this.user1List.tasks[i].subtasks[0].inUser1List = currSubtask.inUser1List;
+            this.user1List.tasks[i].subtasks[0].inUser2List = currSubtask.inUser2List;
+            this.updateFirestore(this.user1List);
+          }
+      }
+    }
+    if (currSubtask.inUser2List == true){
+      for(var i=0;i<this.user2List.tasks.length;i++) {
+          if(this.user2List.tasks[i].subtasks[0].id == currSubtask.id) {
+            this.user2List.tasks[i].subtasks[0].inUser1List = currSubtask.inUser1List;
+            this.user2List.tasks[i].subtasks[0].inUser2List = currSubtask.inUser2List;
+            this.updateFirestore(this.user2List);
+          }
+      }
+    }
+
+    //create or delete item from user list
+    if (inUserList == true){
+      this.addUserTask(arr, currTask, currSubtask);
+    }
+    else {
+
+      this.deleteUserTask(arr, currTask, currSubtask);
+    }
+  }
+  addUserTask(arr: TaskList, currTask: Task, currSubtask: subTask){
+    //create new user task, with same structure but only 1 subtask
+    var newTask = {
+      name: currTask.name,
+      id: currTask.id,
+      done: currTask.done,
+      inUser1List: currTask.inUser1List,
+      inUser2List: currTask.inUser2List,
+      label: currTask.label,
+      subtasks: [
+        {name:currSubtask.name,
+        id: currSubtask.id,
+        inUser1List:currSubtask.inUser1List,
+        inUser2List: currSubtask.inUser2List,
+        done:currSubtask.done}]
+    };
+    //update user list in firestore
+    this.arrayUnionFirestore(arr, newTask);
+
+  }
+  deleteUserTask(arr: TaskList, currTask: Task, currSubtask: subTask){
+    //get element containing inner subTask
+    var UserTaskToDelete = this.getTaskBySubtask(arr, currSubtask);
+
+    //delete element
+    this.deleteTask(arr, UserTaskToDelete);
+
+  }
+
+  //Master List --> <task name>
+  //Master List --> subtask --> <name>
+  //Master List --> subtask --> ☐ done
+  //User List --> <task name>
+  //User List --> subtask --> <name>
+  //User List --> subtask --> ☐ done
+  updateTaskAllLists(newTask: Task, newSubtask?: subTask){
+    //if no subtask to update, and only updating task name in user lists
+    if (newSubtask == null){
+        for(var i=0;i<this.user1List.tasks.length;i++) {
+          if(this.user1List.tasks[i].id == newTask.id){
+            this.user1List.tasks[i].name = newTask.name;
+          }
+        }
+        for(var i=0;i<this.user2List.tasks.length;i++) {
+          if(this.user2List.tasks[i].id == newTask.id){
+            this.user2List.tasks[i].name = newTask.name;
+          }
+        }
+    }
+
+    else{
+      //update master subtask
+
+      var oldTask = this.getTaskBySubtask(this.masterList, newSubtask);
+      var oldSubtask;
+      for(var i=0;i<oldTask.subtasks.length;i++) {
+        //console.log("master subtask:" + oldTask.subtasks.length);
+        if(oldTask.subtasks[i].id == newSubtask.id){
+          oldSubtask = oldTask.subtasks[i];
+          oldTask.subtasks[i].name = newSubtask.name;
+          oldTask.subtasks[i].done = newSubtask.done;
+        }
+      }
+      //update all instances in user 1
+      if (oldSubtask.inUser1List == true){
+
+        for(var i=0;i<this.user1List.tasks.length;i++) {
+          if(this.user1List.tasks[i].id == newTask.id){
+            //this.user1List.tasks[i].name = newTask.name;
+          //console.log("user 1 subtask:" + this.user1List.tasks[i].subtasks[0].name);
+            if(this.user1List.tasks[i].subtasks[0].id == newSubtask.id) {
+              this.user1List.tasks[i].subtasks[0].name = newSubtask.name;
+              this.user1List.tasks[i].subtasks[0].done = newSubtask.done;
+            }
+          }
+        }
+      }
+      //update all instances in user 2
+      if (oldSubtask.inUser2List == true){
+
+        for(var i=0;i<this.user2List.tasks.length;i++) {
+          if(this.user2List.tasks[i].id == newTask.id){
+            //this.user1List.tasks[i].name = newTask.name;
+            //console.log("user 2 subtask:" + this.user2List.tasks[i].subtasks[0].name);
+
+            if(this.user2List.tasks[i].subtasks[0].id == newSubtask.id) {
+              this.user2List.tasks[i].subtasks[0].name = newSubtask.name;
+              this.user2List.tasks[i].subtasks[0].done = newSubtask.done;
+            }
+          }
+        }
+      }
+    }
+
+    this.updateFirestore(this.user1List);
+    this.updateFirestore(this.user2List);
+    this.updateFirestore(this.masterList);
+
+  }
+
+  //User List --> -
+  userButtonDeleteTask(arr: TaskList, task: Task){
+    //uncheck task from master list
+    for(var i=0;i<this.masterList.tasks.length;i++) {
+      for(var x=0;x<this.masterList.tasks[i].subtasks.length;x++) {
+
+        if(this.masterList.tasks[i].subtasks[x].id == task.subtasks[0].id){
+          if(arr.id == 'user1'){
+            this.masterList.tasks[i].subtasks[x].inUser1List = false;
+          }
+          if(arr.id == 'user2'){
+            this.masterList.tasks[i].subtasks[x].inUser2List = false;
+          }
+          this.updateFirestore(this.masterList);
+        }
+      }
+    }
+    //delete task from user list
+    this.deleteTask(arr, task);
+  }
+
+  //---------FIRESTORE FUNCTIONALITY---------
+
+  //DELETE TASK IN FIRESTORE
   deleteTask(arr: TaskList, task: Task) {
     if(task !==null){
       this.firestore.doc('tasks2/' + arr.id).update({
@@ -104,16 +305,25 @@ export class TasklistComponent implements OnInit {
     }
   }
 
+  //DELETE SUBTASK IN FIRESTORE
   deleteSubtask(arr: TaskList, task: Task, subtaskIndex: number) {
     task.subtasks.splice(subtaskIndex,1);
     this.updateFirestore(arr);
   }
 
-
+  //UPDATE FIRESTORE
   updateFirestore(arr: TaskList){
     this.firestore.doc('tasks2/' + arr.id).update({tasks: arr.tasks});
   }
 
+  //ADD FIRESTORE
+  arrayUnionFirestore(arr: TaskList, task: Task){
+    this.firestore.doc('tasks2/' + arr.id).update({
+      tasks: firestore.FieldValue.arrayUnion(task)
+    });
+  }
+
+  //DRAG AND DROP
   reorderList(event: CdkDragDrop<string[]>, arr: TaskList, subArr?: subTask[]) {
     if (event.previousContainer !== event.container) {
       transferArrayItem(event.previousContainer.data,event.container.data,
@@ -135,181 +345,9 @@ export class TasklistComponent implements OnInit {
   }
 
 
+  /*getTaskByID(arr: TaskList,id: string){
+    return arr.tasks.find(x => x.id === id);
+  }*/
 
 
 } //end class
-
-/*
-
-
-
-
-
-
-
-    editTask (arr: any) {
-      this.firestore.doc('tasks/master').update({tasks: arr});
-    }
-
-    deleteFromUserList(masterArr: any, userArr: any, userTask: any, user:string){
-      if(user == 'user1'){
-        this.docRef.update({
-          user1: firestore.FieldValue.arrayRemove(userTask)
-        })
-      }
-      if(user == 'user2'){
-        this.docRef.update({
-          user2: firestore.FieldValue.arrayRemove(userTask)
-        })
-      }
-      //uncheck from master lists
-      for(var i=0;i<masterArr.length;i++) {
-        if(masterArr[i].name == userTask.name){
-          for (var x=0;x<masterArr[i].subtasks.length;x++){
-            if(masterArr[i].subtasks[x].name == userTask.subtask){
-              if (user == 'user1'){
-                masterArr[i].subtasks[x].inUser1List = false;
-              }
-              if (user == 'user2'){
-                masterArr[i].subtasks[x].inUser2List = false;
-              }
-            }
-          }
-        }
-      }
-      this.firestore.doc('tasks/master').update({tasks: masterArr});
-    }
-
-    //user: 'user1' or 'user2'
-    fromUserEditMaster(masterArr: any, userArr: any, userTask: any, user:string){
-      //UPDATE DONE CHECKBOX IN USER LIST
-      if(user == 'user1'){
-        this.firestore.doc('tasks/master').update({user1: userArr});
-      }
-      if(user == 'user2'){
-        this.firestore.doc('tasks/master').update({user2: userArr});
-      }
-
-      //UPDATE DONE CHECKBOX IN master LIST
-      for(var i=0;i<masterArr.length;i++) {
-        if(masterArr[i].name == userTask.name){
-          for (var x=0;x<masterArr[i].subtasks.length;x++){
-            if(masterArr[i].subtasks[x].name == userTask.subtask){
-
-              masterArr[i].subtasks[x].done = userTask.subtaskDone;
-            }
-          }
-        }
-      }
-      this.firestore.doc('tasks/master').update({tasks: masterArr});
-    }
-
-    //based on checkbox in master list, add or delete items to user list
-    fromMasterEditUser(masterArr: any, taskIndex: number, subtaskIndex: number, user: string){
-      //update list first to make sure checkbox is persistent in master list
-      this.firestore.doc('tasks/master').update({tasks: masterArr});
-      var task = {
-        nameIndex: taskIndex,
-        name: masterArr[taskIndex].name,
-        subtaskIndex: subtaskIndex,
-        subtask: masterArr[taskIndex].subtasks[subtaskIndex].name,
-        subtaskDone: masterArr[taskIndex].subtasks[subtaskIndex].done
-      };
-      if(user == "user1"){
-        //if adding to user list
-        var user1checkbox = masterArr[taskIndex].subtasks[subtaskIndex].inUser1List;
-        if (user1checkbox == true){
-          this.docRef.update({
-            user1: firestore.FieldValue.arrayUnion(task)
-          })
-        }
-        //else deleting from user list
-        else{
-          this.docRef.update({
-            user1: firestore.FieldValue.arrayRemove(task)
-          })
-
-        }
-      }
-      //ELSE USER 2
-      else {
-        //if adding to user list
-        var user2checkbox = masterArr[taskIndex].subtasks[subtaskIndex].inUser2List;
-        if (user2checkbox == true){
-          this.docRef.update({
-            user2: firestore.FieldValue.arrayUnion(task)
-          })
-        }
-        //else deleting from user list
-        else{
-          this.docRef.update({
-            user2: firestore.FieldValue.arrayRemove(task)
-          })
-
-        }
-      }
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // ...omitted
-   appendItem() {
-     const emoji = '🍺 Beer Me'
-     this.docRef.update({
-       favs: firestore.FieldValue.arrayUnion(emoji)
-     })
-   }
-
-   removeItem(emoji) {
-     this.docRef.update({
-       favs:  firestore.FieldValue.arrayRemove(emoji)
-     })
-   }
-
-
-
-
-
-
-    addSubTask(emp: Employee) {
-      var subTaskObj = {name:emp.newSubTask,done:false};
-      emp.subTasks.push(subTaskObj);
-      emp.newSubTask = '';
-      this.firestore.doc('employees/' + emp.id).update(emp);
-
-    }
-
-    //PURPOSE: to store/edit done boolean value for sub tasks
-    //GIVEN list/employee object and index of subtask array, update boolean value in database
-    onCheckSubTask(emp:Employee, subDone:boolean, i:number) {
-      this.firestore.doc('employees/' + emp.id).update(emp);
-    }
-
-    //PURPOSE: to delete subtask of item
-    //Given list/employee object and index of subtask array, delete item at index
-    deleteSubTask(emp: Employee, i:number){
-      emp.subTasks.splice(i,1);
-      this.firestore.doc('employees/' + emp.id).update(emp);
-      }
-
-    onEdit(emp: Employee, sub?: string, i?: number) {
-      //if it's a subtask, first update employee.
-      if (sub!= null){
-        emp.subTasks[i].name = sub;
-      }
-      //console.log("on edit"+ emp.inUser2List);
-      this.firestore.doc('employees/' + emp.id).update(emp);
-    }
-
-
-  }*/

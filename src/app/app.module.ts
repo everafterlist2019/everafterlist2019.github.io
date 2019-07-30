@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TasklistService } from './tasklist.service';
 import { TasklistComponent } from './tasklist/tasklist.component';
 
+import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { TasklistComponent } from './tasklist/tasklist.component';
     ToastrModule.forRoot(),
     DragDropModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TextareaAutosizeModule
   ],
   providers: [
     TasklistService

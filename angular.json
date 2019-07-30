@@ -24,10 +24,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
+              "src/styles.scss",
               "node_modules/ngx-toastr/toastr.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.js" ]
           },
           "configurations": {
             "production": {
@@ -116,6 +117,12 @@
           }
         }
       }
-    }},
-  "defaultProject": "Angular7Firestore"
+    }
+  },
+  "defaultProject": "Angular7Firestore",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
