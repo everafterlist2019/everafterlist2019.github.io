@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<div class=\"\">\n  <app-tasklist></app-tasklist>\n</div>\n"
+module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<div class=\"\">\n\n\n  <h1 *ngIf=\"authenticationService.userData | async\">Hello {{ (authenticationService.userData | async)?.email }}</h1>\n\n  <div *ngIf=\"!(authenticationService.userData | async)\">\n      <input type=\"text\" [(ngModel)]=\"email\" placeholder=\"email\">\n      <input type=\"password\" [(ngModel)]=\"password\" placeholder=\"password\">\n\n      <button (click)=\"signUp()\">Sign Up</button>\n\n      <button (click)=\"signIn()\">Login</button>\n  </div>\n\n  <button (click)=\"signOut()\" *ngIf=\"authenticationService.userData | async\">Logout</button>\n\n\n  <app-tasklist *ngIf=\"authenticationService.userData | async\"></app-tasklist>\n</div>\n"
 
 /***/ }),
 
@@ -68,18 +68,68 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _shared_authentication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shared/authentication.service */ "./src/app/shared/authentication.service.ts");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/index.js");
+/* harmony import */ var src_app_tasklist_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/tasklist.service */ "./src/app/tasklist.service.ts");
+
+
+
 
 
 var AppComponent = /** @class */ (function () {
-    function AppComponent() {
+    //userID: string;
+    //allLists2: TaskList[];
+    function AppComponent(authenticationService, firestore, service3) {
+        /*this.service2.getTasks().subscribe(actionArray =>{
+          this.allLists2 = actionArray.map(item => {
+            return {
+              id: item.payload.doc.id,
+              ...item.payload.doc.data()
+            } as TaskList;
+          })
+        });*/
+        //this.userID = null;
+        this.authenticationService = authenticationService;
+        this.firestore = firestore;
+        this.service3 = service3;
         this.title = 'Angular7Firestore';
     }
+    AppComponent.prototype.signUp = function () {
+        this.authenticationService.SignUp(this.email, this.password);
+        this.email = '';
+        this.password = '';
+        //CREATE NEW FIRESTORE COLLECTION
+        /*firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            this.userID = firebase.auth().currentUser.uid;
+            console.log("HOPEFULLY USER ID" + this.userID);
+            //waitForElement();
+            //this.service3.createNewTaskList();
+          } else {
+            //console.log("i suck");
+            // No user is signed in.
+          }
+        });*/
+        //END NEW FIRESTORE COLLECTION
+    };
+    AppComponent.prototype.signIn = function () {
+        this.authenticationService.SignIn(this.email, this.password);
+        console.log("signed in function" + this.email);
+        this.email = '';
+        this.password = '';
+    };
+    AppComponent.prototype.signOut = function () {
+        this.authenticationService.SignOut();
+    };
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-root',
             template: __webpack_require__(/*! raw-loader!./app.component.html */ "./node_modules/raw-loader/index.js!./src/app/app.component.html"),
             styles: [__webpack_require__(/*! ./app.component.css */ "./src/app/app.component.css")]
-        })
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_shared_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"],
+            _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__["AngularFirestore"],
+            src_app_tasklist_service__WEBPACK_IMPORTED_MODULE_4__["TasklistService"]])
     ], AppComponent);
     return AppComponent;
 }());
@@ -102,16 +152,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_fire__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/fire */ "./node_modules/@angular/fire/index.js");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/index.js");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
-/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
-/* harmony import */ var ngx_toastr__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ngx-toastr */ "./node_modules/ngx-toastr/fesm5/ngx-toastr.js");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
-/* harmony import */ var _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/cdk/drag-drop */ "./node_modules/@angular/cdk/esm5/drag-drop.es5.js");
-/* harmony import */ var _tasklist_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./tasklist.service */ "./src/app/tasklist.service.ts");
-/* harmony import */ var _tasklist_tasklist_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./tasklist/tasklist.component */ "./src/app/tasklist/tasklist.component.ts");
-/* harmony import */ var ngx_textarea_autosize__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ngx-textarea-autosize */ "./node_modules/ngx-textarea-autosize/fesm5/ngx-textarea-autosize.js");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/auth */ "./node_modules/@angular/fire/auth/index.js");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/index.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
+/* harmony import */ var ngx_toastr__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ngx-toastr */ "./node_modules/ngx-toastr/fesm5/ngx-toastr.js");
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/cdk/drag-drop */ "./node_modules/@angular/cdk/esm5/drag-drop.es5.js");
+/* harmony import */ var _tasklist_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./tasklist.service */ "./src/app/tasklist.service.ts");
+/* harmony import */ var _tasklist_tasklist_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./tasklist/tasklist.component */ "./src/app/tasklist/tasklist.component.ts");
+/* harmony import */ var ngx_textarea_autosize__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ngx-textarea-autosize */ "./node_modules/ngx-textarea-autosize/fesm5/ngx-textarea-autosize.js");
+/* harmony import */ var _shared_authentication_service__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./shared/authentication.service */ "./src/app/shared/authentication.service.ts");
 
 
 
@@ -126,6 +178,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+/* Auth service */
 
 var AppModule = /** @class */ (function () {
     function AppModule() {
@@ -133,28 +188,95 @@ var AppModule = /** @class */ (function () {
     AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
             declarations: [
-                _app_component__WEBPACK_IMPORTED_MODULE_8__["AppComponent"],
-                _tasklist_tasklist_component__WEBPACK_IMPORTED_MODULE_12__["TasklistComponent"]
+                _app_component__WEBPACK_IMPORTED_MODULE_9__["AppComponent"],
+                _tasklist_tasklist_component__WEBPACK_IMPORTED_MODULE_13__["TasklistComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
-                _angular_fire__WEBPACK_IMPORTED_MODULE_3__["AngularFireModule"].initializeApp(src_environments_environment__WEBPACK_IMPORTED_MODULE_9__["environment"].firebaseConfig),
-                _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestoreModule"],
-                _angular_forms__WEBPACK_IMPORTED_MODULE_5__["FormsModule"],
-                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["BrowserAnimationsModule"],
-                ngx_toastr__WEBPACK_IMPORTED_MODULE_7__["ToastrModule"].forRoot(),
-                _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_10__["DragDropModule"],
-                _angular_forms__WEBPACK_IMPORTED_MODULE_5__["FormsModule"],
-                _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ReactiveFormsModule"],
-                ngx_textarea_autosize__WEBPACK_IMPORTED_MODULE_13__["TextareaAutosizeModule"]
+                _angular_fire__WEBPACK_IMPORTED_MODULE_3__["AngularFireModule"].initializeApp(src_environments_environment__WEBPACK_IMPORTED_MODULE_10__["environment"].firebaseConfig),
+                _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestoreModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormsModule"],
+                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
+                ngx_toastr__WEBPACK_IMPORTED_MODULE_8__["ToastrModule"].forRoot(),
+                _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_11__["DragDropModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormsModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_6__["ReactiveFormsModule"],
+                ngx_textarea_autosize__WEBPACK_IMPORTED_MODULE_14__["TextareaAutosizeModule"],
+                _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__["AngularFireAuthModule"]
             ],
             providers: [
-                _tasklist_service__WEBPACK_IMPORTED_MODULE_11__["TasklistService"]
+                _tasklist_service__WEBPACK_IMPORTED_MODULE_12__["TasklistService"],
+                _shared_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]
             ],
-            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_8__["AppComponent"]]
+            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_9__["AppComponent"]]
         })
     ], AppModule);
     return AppModule;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/shared/authentication.service.ts":
+/*!**************************************************!*\
+  !*** ./src/app/shared/authentication.service.ts ***!
+  \**************************************************/
+/*! exports provided: AuthenticationService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthenticationService", function() { return AuthenticationService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/auth */ "./node_modules/@angular/fire/auth/index.js");
+
+
+
+var AuthenticationService = /** @class */ (function () {
+    function AuthenticationService(angularFireAuth) {
+        this.angularFireAuth = angularFireAuth;
+        this.userData = angularFireAuth.authState;
+    }
+    /* Sign up */
+    AuthenticationService.prototype.SignUp = function (email, password) {
+        this.angularFireAuth
+            .auth
+            .createUserWithEmailAndPassword(email, password)
+            .then(function (res) {
+            console.log('Successfully signed up!', res);
+        })
+            .catch(function (error) {
+            console.log('Something is wrong:', error.message);
+            //alert(error.message);
+        });
+    };
+    /* Sign in */
+    AuthenticationService.prototype.SignIn = function (email, password) {
+        this.angularFireAuth
+            .auth
+            .signInWithEmailAndPassword(email, password)
+            .then(function (res) {
+            console.log('Successfully signed in!');
+        })
+            .catch(function (err) {
+            console.log('Something is wrong:', err.message);
+        });
+    };
+    /* Sign out */
+    AuthenticationService.prototype.SignOut = function () {
+        this.angularFireAuth
+            .auth
+            .signOut();
+    };
+    AuthenticationService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"]])
+    ], AuthenticationService);
+    return AuthenticationService;
 }());
 
 
@@ -174,15 +296,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/index.js");
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! firebase */ "./node_modules/firebase/dist/index.cjs.js");
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
 var TasklistService = /** @class */ (function () {
+    //userId: string;
     function TasklistService(firestore) {
         this.firestore = firestore;
     }
+    TasklistService.prototype.createNewTaskList = function () {
+        console.log("createNewTaskList");
+    };
     TasklistService.prototype.getTasks = function () {
-        return this.firestore.collection('tasks2').snapshotChanges();
+        //var userID = 'tasks2';
+        var testID = firebase__WEBPACK_IMPORTED_MODULE_3__["auth"]().currentUser.uid;
+        console.log("testID: " + testID);
+        /*console.log("tasklist service: " + firebase.auth().currentUser.uid);
+        var testID = firebase.auth().currentUser.uid;
+    
+        if (this.firestore.doc(testID + '/master') == null){
+          console.log("tasklist service: " + "it is null!!!!");
+        }*/
+        return this.firestore.collection(testID).snapshotChanges();
     };
     TasklistService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -227,6 +365,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_tasklist_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/tasklist.service */ "./src/app/tasklist.service.ts");
 /* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/index.js");
 /* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(uuid__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! firebase */ "./node_modules/firebase/dist/index.cjs.js");
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -241,24 +382,73 @@ var TasklistComponent = /** @class */ (function () {
     }
     TasklistComponent.prototype.ngOnInit = function () {
         var _this = this;
+        //console.log("ngOnInit" + firebase.auth().currentUser.uid);
         this.newTaskName = '';
+        this.userID = firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid;
+        //this.userID = 'tasks2';
         this.service2.getTasks().subscribe(function (actionArray) {
             _this.allLists = actionArray.map(function (item) {
                 return tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"]({ id: item.payload.doc.id }, item.payload.doc.data());
             });
-            _this.masterList = {
-                id: _this.allLists[0].id,
-                tasks: _this.allLists[0].tasks
-            };
-            _this.user1List = {
-                id: _this.allLists[1].id,
-                tasks: _this.allLists[1].tasks
-            };
-            _this.user2List = {
-                id: _this.allLists[2].id,
-                tasks: _this.allLists[2].tasks
-            };
+            console.log("ngoninit: " + _this.userID);
+            //console.log("ngOnInit allList id: " + this.allLists[0].id);
+            console.log("ngOnInit allList length: " + _this.allLists.length);
+            //if new user, create new collection and add in sample tasks
+            if (_this.allLists.length < 3) {
+                console.log("success!!!!!");
+                var newTask = {
+                    name: "yay",
+                    id: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+                    done: false,
+                    inUser1List: true,
+                    inUser2List: true,
+                    label: false,
+                    subtasks: [
+                        { name: 'new subtask...',
+                            id: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+                            inUser1List: true,
+                            inUser2List: true,
+                            done: false }
+                    ]
+                };
+                _this.firestore.doc(_this.userID + '/' + 'master').set({
+                    tasks: [newTask]
+                });
+                _this.firestore.doc(_this.userID + '/' + 'user1').set({
+                    tasks: [newTask]
+                });
+                _this.firestore.doc(_this.userID + '/' + 'user2').set({
+                    tasks: [newTask]
+                });
+                _this.masterList = {
+                    id: 'master',
+                    tasks: [newTask]
+                };
+                _this.user1List = {
+                    id: 'user1',
+                    tasks: [newTask]
+                };
+                _this.user2List = {
+                    id: 'user2',
+                    tasks: [newTask]
+                };
+            }
+            else {
+                _this.masterList = {
+                    id: _this.allLists[0].id,
+                    tasks: _this.allLists[0].tasks
+                };
+                _this.user1List = {
+                    id: _this.allLists[1].id,
+                    tasks: _this.allLists[1].tasks
+                };
+                _this.user2List = {
+                    id: _this.allLists[2].id,
+                    tasks: _this.allLists[2].tasks
+                };
+            }
         });
+        console.log(this.firestore.doc(this.userID + '/master'));
     };
     //IS THIS FUNCTION NECESSARY?
     TasklistComponent.prototype.getTaskBySubtask = function (arr, currSubtask) {
@@ -470,7 +660,7 @@ var TasklistComponent = /** @class */ (function () {
     //DELETE TASK IN FIRESTORE
     TasklistComponent.prototype.deleteTask = function (arr, task) {
         if (task !== null) {
-            this.firestore.doc('tasks2/' + arr.id).update({
+            this.firestore.doc(this.userID + '/' + arr.id).update({
                 tasks: firebase_app__WEBPACK_IMPORTED_MODULE_3__["firestore"].FieldValue.arrayRemove(task)
             });
         }
@@ -482,13 +672,16 @@ var TasklistComponent = /** @class */ (function () {
     };
     //UPDATE FIRESTORE
     TasklistComponent.prototype.updateFirestore = function (arr) {
-        this.firestore.doc('tasks2/' + arr.id).update({ tasks: arr.tasks });
+        this.firestore.doc(this.userID + '/' + arr.id).update({ tasks: arr.tasks });
     };
     //ADD FIRESTORE
     TasklistComponent.prototype.arrayUnionFirestore = function (arr, task) {
-        this.firestore.doc('tasks2/' + arr.id).update({
+        this.firestore.doc(this.userID + '/' + arr.id).update({
             tasks: firebase_app__WEBPACK_IMPORTED_MODULE_3__["firestore"].FieldValue.arrayUnion(task)
         });
+    };
+    TasklistComponent.prototype.createNewCollection = function () {
+        console.log("create new collection");
     };
     //DRAG AND DROP
     TasklistComponent.prototype.reorderList = function (event, arr, subArr) {
