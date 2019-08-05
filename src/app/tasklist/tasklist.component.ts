@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { firestore } from 'firebase/app';
 
+
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { FormControl } from '@angular/forms';
 
@@ -14,6 +15,14 @@ import { subTask } from 'src/app/subtask2.model';
 import { v4 as uuid } from 'uuid';
 
 declare var $: any; //importing jquery
+
+/* Auth service */
+import { AuthenticationService } from '../shared/authentication.service';
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
+import * as firebase from 'firebase';
+
 
 @Component({
   selector: 'app-tasklist',
@@ -27,13 +36,23 @@ export class TasklistComponent implements OnInit {
   user1List: TaskList;
   user2List: TaskList;
   newTaskName: string;
+  userID: string;
+
 
   constructor(
     private firestore: AngularFirestore,
     private service2: TasklistService) {}
 
   ngOnInit() {
+    //console.log("ngOnInit" + firebase.auth().currentUser.uid);
     this.newTaskName = '';
+    this.userID = firebase.auth().currentUser.uid;
+    //this.userID = 'tasks2';
+
+
+
+
+
 
     this.service2.getTasks().subscribe(actionArray =>{
       this.allLists = actionArray.map(item => {
@@ -42,20 +61,75 @@ export class TasklistComponent implements OnInit {
           ...item.payload.doc.data()
         } as TaskList;
       })
+      console.log("ngoninit: " + this.userID);
 
-      this.masterList = {
-        id: this.allLists[0].id,
-        tasks : this.allLists[0].tasks
-      };
-      this.user1List = {
-        id: this.allLists[1].id,
-        tasks : this.allLists[1].tasks
-      };
-      this.user2List = {
-        id: this.allLists[2].id,
-        tasks : this.allLists[2].tasks
-      };
+      //console.log("ngOnInit allList id: " + this.allLists[0].id);
+      console.log("ngOnInit allList length: " + this.allLists.length);
+
+      //if new user, create new collection and add in sample tasks
+      if(this.allLists.length <3){
+        console.log("success!!!!!");
+
+        var newTask = {
+          name: "yay",
+          id: uuid(),
+          done: false,
+          inUser1List: true,
+          inUser2List: true,
+          label: false,
+          subtasks: [
+            {name:'new subtask...',
+            id: uuid(),
+            inUser1List:true,
+            inUser2List: true,
+            done:false}]
+        };
+
+        this.firestore.doc(this.userID + '/' + 'master').set({
+            tasks: [newTask]
+          });
+        this.firestore.doc(this.userID + '/' + 'user1').set({
+            tasks: [newTask]
+          });
+        this.firestore.doc(this.userID + '/' + 'user2').set({
+            tasks: [newTask]
+          });
+          this.masterList = {
+            id: 'master',
+            tasks : [newTask]
+          };
+          this.user1List = {
+            id: 'user1',
+            tasks :  [newTask]
+          };
+          this.user2List = {
+            id: 'user2',
+            tasks :  [newTask]
+          };
+      }
+
+      else {
+        this.masterList = {
+          id: this.allLists[0].id,
+          tasks : this.allLists[0].tasks
+        };
+        this.user1List = {
+          id: this.allLists[1].id,
+          tasks : this.allLists[1].tasks
+        };
+        this.user2List = {
+          id: this.allLists[2].id,
+          tasks : this.allLists[2].tasks
+        };
+      }
+
+
+
+
+
       });
+
+      console.log(this.firestore.doc(this.userID + '/master'));
 
 
     }
@@ -299,7 +373,7 @@ export class TasklistComponent implements OnInit {
   //DELETE TASK IN FIRESTORE
   deleteTask(arr: TaskList, task: Task) {
     if(task !==null){
-      this.firestore.doc('tasks2/' + arr.id).update({
+      this.firestore.doc(this.userID + '/' + arr.id).update({
         tasks: firestore.FieldValue.arrayRemove(task)
       });
     }
@@ -313,14 +387,18 @@ export class TasklistComponent implements OnInit {
 
   //UPDATE FIRESTORE
   updateFirestore(arr: TaskList){
-    this.firestore.doc('tasks2/' + arr.id).update({tasks: arr.tasks});
+    this.firestore.doc(this.userID + '/' + arr.id).update({tasks: arr.tasks});
   }
 
   //ADD FIRESTORE
   arrayUnionFirestore(arr: TaskList, task: Task){
-    this.firestore.doc('tasks2/' + arr.id).update({
+    this.firestore.doc(this.userID + '/' + arr.id).update({
       tasks: firestore.FieldValue.arrayUnion(task)
     });
+  }
+
+  createNewCollection(){
+    console.log("create new collection");
   }
 
   //DRAG AND DROP

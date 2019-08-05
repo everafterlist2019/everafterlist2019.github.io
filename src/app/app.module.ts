@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { FormsModule } from "@angular/forms";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,6 +17,9 @@ import { TasklistService } from './tasklist.service';
 import { TasklistComponent } from './tasklist/tasklist.component';
 
 import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
+
+/* Auth service */
+import { AuthenticationService } from './shared/authentication.service';
 
 
 @NgModule({
@@ -34,10 +38,12 @@ import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
     DragDropModule,
     FormsModule,
     ReactiveFormsModule,
-    TextareaAutosizeModule
+    TextareaAutosizeModule,
+    AngularFireAuthModule
   ],
   providers: [
-    TasklistService
+    TasklistService,
+    AuthenticationService
 ],
   bootstrap: [AppComponent]
 })
